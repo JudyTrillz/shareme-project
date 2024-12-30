@@ -1,0 +1,227 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Share Me Full stack tour | Shows my list of complex actions",
+  "steps": [
+    {
+      "file": "shareme-frontend/src/main.jsx",
+      "description": "1. Import Browser router, Route, Routes to enable routing in the app.\r\n",
+      "line": 6
+    },
+    {
+      "file": "shareme-frontend/src/main.jsx",
+      "description": "Import GoogleOAuthProvider from @react-oauth/google to enable google authentication.",
+      "line": 7
+    },
+    {
+      "file": "shareme-frontend/src/main.jsx",
+      "description": "Wrapped the entire app with the GoogleOAuthProvider and provided the client id to make the app ready to use google authentication",
+      "line": 12
+    },
+    {
+      "file": "shareme-frontend/src/main.jsx",
+      "description": "Wrapped the entire app within the google auth provider with the router and routes tag to enable routing in the app.",
+      "line": 13
+    },
+    {
+      "file": "shareme-frontend/src/App.jsx",
+      "description": "Using the Routes and route tag to route all elements in application",
+      "line": 7
+    },
+    {
+      "file": "shareme-frontend/src/components/Login.jsx",
+      "description": "This signin function is used for the google authentication signup which creates the user and onSuccess and uses the fetch api to get the info of the signed in user from the google api. If the response is ok, it creates a new document in the backend linked to the sanity content lake throught the client...",
+      "line": 18
+    },
+    {
+      "file": "shareme-frontend/src/components/Login.jsx",
+      "description": "This is the document created. the _id serves as the googleID, the _type: 'user' is refered to the user schema which is where all the signed in users are stored.",
+      "line": 34
+    },
+    {
+      "file": "shareme-frontend/src/components/Login.jsx",
+      "description": "After the user is created to the backend the client.createIfNotExits takes the doc object above and send it to the appropriate schema type which is the user schema. if it already exists, it replaces it and navigates to the home page.",
+      "line": 41
+    },
+    {
+      "file": "shareme-frontend/src/client.jsx",
+      "description": "This entire block of code is the client that connects the frontend (REACT APPLICATION) to the backend (SANITY STUDIO).\r\n\r\nimport { createClient } from \"@sanity/client\";\r\nimport imageUrlBuilder from \"@sanity/image-url\";\r\n\r\nexport const client = createClient({\r\n  projectId: process.env.REACT_APP_SHAREME_PROJECT_ID,\r\n  dataset: \"production\",\r\n  apiVersion: \"2024-04-07\",\r\n  useCdn: true,\r\n  token: process.env.REACT_APP_SHAREME_PROJECT_TOKEN,\r\n});\r\n\r\nconst builder = imageUrlBuilder(client);\r\n\r\nexport const urlFor = (source) => builder.image(source);",
+      "line": 1
+    },
+    {
+      "file": "shareme-frontend/.env",
+      "description": "the use of enviroment variables to store confidential data of the app for optimum security",
+      "line": 1
+    },
+    {
+      "file": "shareme-frontend/src/container/Home.jsx",
+      "description": "When working in the home component, we get the user from the localstorage that was saved immediately after the user signed in. We then check if the item from the local storage is not  = undefined. if not = undefined, we parse the object and use the object to fetch the user details directly from our sanity backend. And if user info  is = undefined, we simply clear the local storage",
+      "line": 14
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "Created a sanity query using a specific syntax from sanity to get the user data and the user id.\r\n  const query = `*[_type == \"user\" && _id == '${userId}']`;\r\n\r\nTHE QUERY CODE SIMPLY MEANS: GET ME A DOCUMENT OOF TYPE USER WHICH HAS AN ID PROPERTY.",
+      "line": 1
+    },
+    {
+      "file": "shareme-frontend/src/container/Home.jsx",
+      "description": "Remeber when we saved the user info to the local storage when we signed in the first time? Now we are  getting the user info so we can use it inside of the query. ",
+      "line": 15
+    },
+    {
+      "file": "shareme-frontend/src/container/Home.jsx",
+      "description": "in this useEffect, we are atually loading the user info directly from sanity. In our query from Data.js, the user id we passed in is the userinfo googleId. and then we use the client to fetchthe query based on the google id from the local storage and set the user to that particular id.",
+      "line": 22
+    },
+    {
+      "file": "shareme-frontend/src/components/SideBar.jsx",
+      "description": "Using the isActive class that comes as a prop from the Navlink component from the react router dom, We created a style for when it is active (isActiveStyle) and when it is not active (isNotActiveStyle)",
+      "line": 6
+    },
+    {
+      "file": "shareme-frontend/src/components/SideBar.jsx",
+      "description": "This is where we used the isActive prop from navlink as a ternary statement to check if the navlink is active or not",
+      "line": 43
+    },
+    {
+      "file": "shareme-frontend/src/components/SideBar.jsx",
+      "description": "Created a mock categories which we used to create a demo category list on our sidebar. These categories will be later changed and gotten directly from sanity and will be used to filter through different PINS.",
+      "line": 12
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "*[_type == \"pin\" && title match '${searchTerm}*' || category match '${searchTerm}*' || about match '${searchTerm}*']: This part of the query specifies the selection criteria for the pins. It uses the * selector to select all documents of type \"pin\" (_type == \"pin\"). The && operator combines multiple conditions:\r\n\r\ntitle match '${searchTerm}*': This condition ensures that the pin's title matches the searchTerm provided by the user. The match keyword performs a full-text search on the specified field (title in this case), looking for terms that start with searchTerm.\r\ncategory match '${searchTerm}*': Similarly, this condition searches for pins whose category matches the searchTerm.\r\nabout match '${searchTerm}*': This condition searches for pins whose \"about\" field matches the searchTerm.\r\n{ ... }: This block defines the fields to retrieve for each pin that matches the selection criteria specified in the filter expression.\r\n\r\nimage { asset -> { url } }: This retrieves the URL of the image associated with each pin. It follows a reference to the asset document associated with the pin's image and retrieves its URL.\r\n_id: This retrieves the unique identifier of each pin.\r\ndestination: This retrieves the destination field of each pin.\r\npostedBy -> { _id, userName, image }: This retrieves information about the user who posted each pin. It follows a reference to the user document (postedBy) and retrieves its _id, userName, and image fields.\r\nsave[] { _key, postedBy -> { -id, userName, image } }: This retrieves information about users who have saved each pin. The save[] array contains references to the users who saved the pin. For each saved entry, it retrieves the _key field (which likely represents the save action) and information about the user who saved the pin, including their _id, userName, and image.",
+      "line": 7
+    },
+    {
+      "file": "shareme-frontend/src/components/Feed.jsx",
+      "description": "Creating a useEffect that will run anytime the search term changes. The search term which is the categoryId is passed into the search query. When the search is matched, we use the client.fetch to get the query which returns a data and we set the current pins on the page to the data. See previous step to know how and what type of data we got from the sanity content lake.",
+      "line": 13
+    },
+    {
+      "file": "shareme-frontend/src/components/SideBar.jsx",
+      "description": "In this step, we first slice the list of categories from the first element to the last element because we don't want the last element to be visible on the page. After that, we map each category and create a link with the category names.",
+      "line": 53
+    },
+    {
+      "file": "shareme-frontend/src/components/SideBar.jsx",
+      "description": "just a side note to an error i made while coding this, ...... this checks if the sidebar is open(true) and sets it to close(false)",
+      "line": 25
+    },
+    {
+      "file": "shareme-frontend/src/container/Pins.jsx",
+      "description": "This state will be used for our search component to help filter pins either by name or categories and also to give the search box a single source of truth",
+      "line": 7
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "*[_type == \"pin\" && title match '${searchTerm}*' || category match '${searchTerm}*' || about match '${searchTerm}*']: This part of the query specifies the selection criteria for the pins. It uses the * selector to select all documents of type \"pin\" (_type == \"pin\"). The && operator combines multiple conditions:\r\n\r\ntitle match '${searchTerm}*': This condition ensures that the pin's title matches the searchTerm provided by the user. The match keyword performs a full-text search on the specified field (title in this case), looking for terms that start with searchTerm.\r\ncategory match '${searchTerm}*': Similarly, this condition searches for pins whose category matches the searchTerm.\r\nabout match '${searchTerm}*': This condition searches for pins whose \"about\" field matches the searchTerm.\r\n{ ... }: This block defines the fields to retrieve for each pin that matches the selection criteria specified in the filter expression.\r\n\r\nimage { asset -> { url } }: This retrieves the URL of the image associated with each pin. It follows a reference to the asset document associated with the pin's image and retrieves its URL.\r\n_id: This retrieves the unique identifier of each pin.\r\ndestination: This retrieves the destination field of each pin.\r\npostedBy -> { _id, userName, image }: This retrieves information about the user who posted each pin. It follows a reference to the user document (postedBy) and retrieves its _id, userName, and image fields.\r\nsave[] { _key, postedBy -> { -id, userName, image } }: This retrieves information about users who have saved each pin. The save[] array contains references to the users who saved the pin. For each saved entry, it retrieves the _key field (which likely represents the save action) and information about the user who saved the pin, including their _id, userName, and image.",
+      "line": 7
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "This query is to get the list of all pins and used to get all the items not in the category.",
+      "line": 34
+    },
+    {
+      "file": "shareme-frontend/src/components/Feed.jsx",
+      "description": "This useEffect runs  function when the category id is changed. it uses the searchQuery function from data.js to search for list of pins that matches the search term in other words, the category id. We then use the client to fetch the data from the query and set the pins to the data. But this happens only when we have a categoryId else we get all th pins. SEE LAST TWO STEPS TO KNOW THE QUERY. ",
+      "line": 13
+    },
+    {
+      "file": "shareme-frontend/src/components/Feed.jsx",
+      "description": "After we have gotten the data and saved it to the setPins(data), we then render a MasonryLayout component to display the layout if the pins exists.",
+      "line": 32
+    },
+    {
+      "file": "shareme-frontend/src/components/MasonryLayout.jsx",
+      "description": "this breakpointObj is a list of breakpoints used by the masonry layout css",
+      "line": 4
+    },
+    {
+      "file": "shareme-frontend/src/components/MasonryLayout.jsx",
+      "description": "We import Masonry from masonry-css and use it to render out individual pins gotten from out query on the feedback. In this masonry, we assign the breakpointObj to the breakpointCols which is a default attribute of the masonry css and then we map through the pins. for each pin, we render a Pin component and pass the pin as prop to it.",
+      "line": 16
+    },
+    {
+      "file": "shareme-frontend/src/components/Pin.jsx",
+      "description": "In this component, we destructure each pin and get any value we want from the pin. such as: postedBy, image, _id, destination etc",
+      "line": 11
+    },
+    {
+      "file": "shareme-frontend/src/components/Pin.jsx",
+      "description": "When we want to save an item or a pin, we check if the user have already saved the pin before. If he has we display a button if not, we display another button. but to check if he has, we need access to the userInfo which we can acces from the localStorage. But because we have that function in multiple places, we created a util function. See src/util/fetchUser.js for more info.",
+      "line": 50
+    },
+    {
+      "file": "shareme-frontend/src/components/MasonryLayout.jsx",
+      "description": "This is the lis of breakpoints  use by masonry layout css.",
+      "line": 4
+    },
+    {
+      "file": "shareme-frontend/src/components/Pin.jsx",
+      "description": "This save pin function is a function used to save a particular pin and patch the vlaues to the sanity document. In the function we check if the user have already saved the post: if(!alreadySaved) => we set save post to true and the we use our sanity client to patch the id, setIfMissing a save property to the pin document; sets an attribute of the document if it does not exist already and then insert into the save and what we want to save into the document. After this functionis complete, we do a commit().then() {window.location.reload() setSavePost(false)}",
+      "line": 22
+    },
+    {
+      "file": "shareme-frontend/src/components/Pin.jsx",
+      "description": "This deletePin function is using the client linking to our backend to delete a specific post based on the id",
+      "line": 47
+    },
+    {
+      "file": "shareme-frontend/src/components/CreateAPin.jsx",
+      "description": "This upload image function is used for uploading images to sanity. We first get the file type const { type, name } = e.target.files[0]; and then check if the type of the file fits our requirements e.g jpeg, png, gif, tiff, svg+xml. When it does, we set setWrongImageType(false) and then setLoading to true to wait for how long it will take thw upload to generate the image using the client.assets.upload(\"image\", e.target.files[0], {\r\n          contentType: type,\r\n          filename: name,\r\n        })",
+      "line": 23
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "This query is a sanity language to help fetch the document pin and all the documents in the pin such as: image, _id, postedBy etc... \r\n",
+      "line": 125
+    },
+    {
+      "file": "shareme-frontend/src/utils/Data.js",
+      "description": "This more pin query is used to get more deatails about a pin based on category ",
+      "line": 162
+    },
+    {
+      "file": "shareme-frontend/src/components/PinDetails.jsx",
+      "description": "The fetchPinDetails function is used to run a function to call the details on a pin based on the query. see data.js for query. \r\nfirst we get the pin details using the specific id from the url parameter {pinId} by saying pinDetailQuery(pinId); Second, we check if we have a query, we run the client.fetch on the query and set the pin details to the response of the .then function. Third, if we do get a response, we run another query fetch to get the major details of the pin and set the pin to the response. \r\n\r\nlet query = pinDetailQuery(pinId);\r\n\r\n    if (query) {\r\n      client.fetch(query).then((data) => {\r\n        setPinDetails(data[0]);\r\n\r\n        if (data[0]) {\r\n          query = pinDetailMorePinQuery(data[0]);\r\n\r\n          client.fetch(query).then((response) => {\r\n            setPins(response);\r\n          });\r\n        }\r\n      });\r\n    }\r\n\r\nWhen this is done, we then use a useEffect function to call the function so that it call call a new query call any time the pinId changes. \r\n\r\n useEffect(() => {\r\n    fetchPinDetails();\r\n  }, [pinId]);\r\n",
+      "line": 45
+    },
+    {
+      "file": "shareme-frontend/src/components/PinDetails.jsx",
+      "description": "This add comment function is a function that patches the comment field of the pin in the sanity backend. it takes the setAddingComment to true an then it patches the pinId and setIfMissing the commetn array.  client\r\n        .patch(pinId)\r\n        .setIfMissing({ comments: [] })\r\n        .insert(\"after\", \"comments[-1]\", [\r\n          {\r\n            comment,\r\n            _key: uuidv4(),\r\n            postedBy: {\r\n              _type: \"postedBy\",\r\n              _ref: user._id,\r\n            },\r\n          },\r\n        ])\r\n        .commit()\r\n        .then(() => {\r\n          fetchPinDetails();\r\n          setComment(\"\");\r\n          setAddingComment(false);\r\n          window.location.reload();\r\n        });",
+      "line": 18
+    },
+    {
+      "file": "shareme-frontend/src/components/UserProfile.jsx",
+      "description": "This useEffect function is used to fetch the user data from sanity to display the user details on the profile page.",
+      "line": 24
+    },
+    {
+      "file": "shareme-frontend/src/components/UserProfile.jsx",
+      "description": "This useEffect runs anytime the user Id changes which is in the useParams(). and re calls a new user data based on the user id",
+      "line": 32
+    },
+    {
+      "file": "shareme-frontend/src/components/UserProfile.jsx",
+      "description": "In the useEffect above, it runs anytime the userId from the navParams changes. So when the effect is running, just before the data for the user comes back, we run the spinner an then it goes away when the user data comes back.",
+      "line": 40
+    },
+    {
+      "file": "shareme-frontend/src/components/UserProfile.jsx",
+      "description": "This useEffect is used to determine the value of the text if it is created or saved. Depending on the text value, we use a specific query to get either the saved post or the created post through the client.fetch function",
+      "line": 40
+    },
+    {
+      "file": "shareme-frontend/src/components/UserProfile.jsx",
+      "description": "Google log out functionality.",
+      "line": 58
+    },
+    {
+      "file": "shareme-frontend/src/App.jsx",
+      "description": "This final useEffect function is used to check if we have a user in the localStorage which we get after login. If we don't have it, we will navigate to the login page",
+      "line": 10
+    }
+  ],
+  "ref": "main"
+}
